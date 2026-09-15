@@ -1,0 +1,10 @@
+train,test,macro_f1
+CalMS21_task1,CalMS21_task1,0.7239
+CalMS21_task1,CalMS21_task2,0.8579
+CalMS21_task1,CalMS21_supplemental,0.7208
+CalMS21_task2,CalMS21_task1,0.8195
+CalMS21_task2,CalMS21_task2,0.8937
+CalMS21_task2,CalMS21_supplemental,0.7713
+CalMS21_supplemental,CalMS21_task1,0.6789
+CalMS21_supplemental,CalMS21_task2,0.6932
+CalMS21_supplemental,CalMS21_supplemental,0.7957

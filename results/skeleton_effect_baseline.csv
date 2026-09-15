@@ -1,0 +1,4 @@
+metric,n_pairs,raw_mean,corr_mean,delta_mean,ci_lo,ci_hi,wilcoxon_p,helps
+f1_eval,40,0.6739,0.6412,-0.0326,-0.0494,-0.017,0.0003,False
+f1_full,40,0.419,0.3747,-0.0443,-0.0708,-0.0198,0.0006,False
+f1_event,40,0.5563,0.5388,-0.0175,-0.028,-0.007,0.0019,False

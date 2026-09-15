@@ -1,0 +1,7 @@
+variant,metric,n_pairs,raw_mean,var_mean,delta_mean,ci_lo,ci_hi,wilcoxon_p,helps
+corrected(pooled),f1_eval,20,0.7284,0.6912,-0.0372,-0.0601,-0.0165,0.002,False
+corrected(pooled),f1_full,20,0.3717,0.3251,-0.0467,-0.1035,-0.0032,0.0441,False
+corrected(pooled),f1_event,20,0.5819,0.5542,-0.0277,-0.0476,-0.0116,0.0042,False
+permouse,f1_eval,20,0.7284,0.6841,-0.0442,-0.0614,-0.0259,0.0002,False
+permouse,f1_full,20,0.3717,0.3205,-0.0512,-0.1124,-0.0062,0.0215,False
+permouse,f1_event,20,0.5819,0.5573,-0.0246,-0.0385,-0.0136,0.0002,False

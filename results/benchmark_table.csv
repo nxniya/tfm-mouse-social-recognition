@@ -1,0 +1,5 @@
+Version,Viol. rate (%),Reduction (%),Jerk (norm),Accel RMS,Runtime ms/fr,F1 downstream
+antes,11.1,0.0,,,0.0,—
+v1 (λ uniforme),9.26,16.6,,,137.7,—
+v2 (λ auto),5.61,49.4,,,212.8,—
+v3 (multi-paso),4.84,56.4,,,184.7,—

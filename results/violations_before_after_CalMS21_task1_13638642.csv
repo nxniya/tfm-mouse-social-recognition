@@ -1,0 +1,15 @@
+edge,violation_rate,phase
+nose→neck,0.051333333333333335,before
+neck→ear_left,0.234,before
+neck→ear_right,0.26066666666666666,before
+neck→hip_left,0.024,before
+neck→hip_right,0.03333333333333333,before
+hip_left→tail_base,0.09333333333333334,before
+hip_right→tail_base,0.08,before
+nose→neck,0.136,after
+neck→ear_left,0.03866666666666667,after
+neck→ear_right,0.04733333333333333,after
+neck→hip_left,0.02,after
+neck→hip_right,0.018,after
+hip_left→tail_base,0.046,after
+hip_right→tail_base,0.03266666666666666,after

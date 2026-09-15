@@ -1,0 +1,2 @@
+model,smooth,mode,f1_event_argmax,f1_event_official,gain_thresholds,boot_ci_lo,boot_ci_hi,fit_predict_s
+histgb,0,residual,0.45,0.475,0.025,0.4233,0.5358,2764.7

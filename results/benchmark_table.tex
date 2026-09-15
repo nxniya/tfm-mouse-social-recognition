@@ -1,0 +1,15 @@
+\begin{table}
+\caption{Comparación cuantitativa de las versiones del pipeline de corrección cinemática. Violation rate: fracción de aristas que superan el umbral de 1.84σ. Downstream F1: clasificación BiLSTM sobre ventanas de 64 frames.}
+\label{tab:skeleton_results}
+\begin{tabular}{lrrrrrl}
+\toprule
+ & Viol. rate (%) & Reduction (%) & Jerk (norm) & Accel RMS & Runtime ms/fr & F1 downstream \\
+Version &  &  &  &  &  &  \\
+\midrule
+antes & 11.100 & 0.000 & — & — & 0.000 & — \\
+v1 (λ uniforme) & 9.260 & 16.600 & — & — & 137.700 & — \\
+v2 (λ auto) & 5.610 & 49.400 & — & — & 212.800 & — \\
+v3 (multi-paso) & 4.840 & 56.400 & — & — & 184.700 & — \\
+\bottomrule
+\end{tabular}
+\end{table}

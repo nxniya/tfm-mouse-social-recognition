@@ -1,0 +1,17 @@
+{
+  "recommended": {
+    "speed_sigma": 6.0,
+    "detection_n_sigma": 5.0,
+    "adaptive_thresholds_k": 4.5
+  },
+  "frac_flagged": 0.5045489035893911,
+  "frac_length": 0.29717851488072056,
+  "frac_speed": 0.0,
+  "videos": [
+    "13638642",
+    "1296577409",
+    "537514760",
+    "687327340",
+    "867864385"
+  ]
+}

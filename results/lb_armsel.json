@@ -1,0 +1,41 @@
+{
+ "score": 0.4798,
+ "choice": {
+  "CRIM13": {
+   "run": "lb_arm_bal",
+   "calib": 0.5293
+  },
+  "CalMS21_supplemental": {
+   "run": "lb_v3_ctrl",
+   "calib": -1.0
+  },
+  "CalMS21_task1": {
+   "run": "lb_v3_ctrl",
+   "calib": -1.0
+  },
+  "CalMS21_task2": {
+   "run": "lb_v3_ctrl",
+   "calib": -1.0
+  },
+  "CautiousGiraffe": {
+   "run": "lb_arm_bal",
+   "calib": 0.3391
+  },
+  "ElegantMink": {
+   "run": "lb_arm_bal",
+   "calib": 0.358
+  },
+  "InvincibleJellyfish": {
+   "run": "lb_arm_none",
+   "calib": 0.2712
+  },
+  "JovialSwallow": {
+   "run": "lb_arm_bal",
+   "calib": 0.3984
+  },
+  "TranquilPanther": {
+   "run": "lb_arm_bal",
+   "calib": 0.2888
+  }
+ }
+}

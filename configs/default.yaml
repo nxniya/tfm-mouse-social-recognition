@@ -1,0 +1,181 @@
+# configs/default.yaml
+# Default hyperparameters for the classification and active-learning stages.
+
+# ---------------------------------------------------------------------------
+# Data
+# ---------------------------------------------------------------------------
+data:
+  lab: "CalMS21_task1"          # reference laboratory
+  window_size: 64               # frames per window
+  stride: 16                    # stride, giving 75% overlap
+  min_window_fill: 0.75         # minimum fraction of valid frames
+  val_frac: 0.15                # validation fraction
+  test_frac: 0.15               # test fraction
+  seed: 42
+  include_background: false     # drop windows with no annotated behaviour
+
+# ---------------------------------------------------------------------------
+# Training (the deep models)
+# ---------------------------------------------------------------------------
+training:
+  epochs: 100
+  batch_size: 64
+  lr: 1.0e-3
+  weight_decay: 1.0e-4
+  early_stopping_patience: 10
+  clip_grad_norm: 1.0
+  seed: 42
+  device: "auto"                # "auto" | "cpu" | "cuda"
+
+# ---------------------------------------------------------------------------
+# Loss function
+# ---------------------------------------------------------------------------
+loss:
+  type: "focal"                 # "cross_entropy" | "focal"
+  focal_gamma: 2.0              # gamma for the focal loss; 0 is plain cross-entropy
+  use_class_weights: true       # weight by inverse frequency
+  label_smoothing: 0.0          # label smoothing, as a regulariser
+
+# ---------------------------------------------------------------------------
+# LSTM model
+# ---------------------------------------------------------------------------
+model:
+  lstm:
+    hidden_size: 128
+    num_layers: 2
+    dropout: 0.3
+    bidirectional: true
+
+  # CNN-LSTM (M2). The CNN picks up local motion patterns and the BiLSTM captures
+  # the global context; on this data it outperforms the plain BiLSTM.
+  cnn_lstm:
+    cnn_channels: 128      # internal channels of the CNN encoder
+    cnn_layers: 3          # Conv1D residual blocks, kernels 7 -> 5 -> 3
+    lstm_hidden: 128       # LSTM units per direction
+    lstm_layers: 2         # stacked BiLSTM layers
+    dropout: 0.3
+    bidirectional: true
+    scheduler: "one_cycle" # "cosine" | "one_cycle"
+    augment: true          # Gaussian noise plus temporal dropout during training
+
+# ---------------------------------------------------------------------------
+# sklearn baselines
+# ---------------------------------------------------------------------------
+baseline:
+  random_forest:
+    n_estimators: 300
+    max_depth: null              # null means unrestricted
+    class_weight: "balanced"
+  svm:
+    C: 1.0
+    class_weight: "balanced"
+  gradient_boosting:
+    max_iter: 300
+    learning_rate: 0.1
+    max_depth: 5
+  cross_val_folds: 5
+
+# ---------------------------------------------------------------------------
+# Ablation experiments
+# ---------------------------------------------------------------------------
+ablation:
+  configs:
+    - name: "B1_raw_rf"
+      description: "Raw keypoints + RF (the MARS-style baseline)"
+      include_dz: false
+      include_relational: false
+      use_corrected: false
+    - name: "B2_corrected_rf"
+      description: "Corrected keypoints + RF (the MouseSkeleton effect)"
+      include_dz: false
+      include_relational: false
+      use_corrected: true
+    - name: "B3_dz_rf"
+      description: "Implicit-3D features + RF (the dz effect)"
+      include_dz: true
+      include_relational: false
+      use_corrected: true
+    - name: "B4_full_rf"
+      description: "Every feature + RF (50 features)"
+      include_dz: true
+      include_relational: true
+      use_corrected: true
+    - name: "M1_full_lstm"
+      description: "Every feature + BiLSTM"
+      include_dz: true
+      include_relational: true
+      use_corrected: true
+      model_type: "lstm"
+
+# ---------------------------------------------------------------------------
+# Output paths
+# ---------------------------------------------------------------------------
+paths:
+  features_dir: "dataset/features"
+  results_dir: "results"
+  checkpoints_dir: "results/checkpoints"
+
+# ---------------------------------------------------------------------------
+# Skeleton correction (MouseSkeleton / keypoint_smoother)
+# ---------------------------------------------------------------------------
+# SINGLE SOURCE OF TRUTH: configs/skeleton.yaml, mapped onto smooth_video by
+# src/skeleton/config.py:skeleton_smooth_kwargs. Do NOT duplicate the optimiser
+# weights or the detector thresholds here: the feature pipeline, the correction
+# cache and the event-cache builder all read skeleton.yaml. This block holds only
+# pipeline switches, never correction parameters.
+skeleton:
+  # Cache the corrected tracking on disk (dataset/corrected) so that repeated or
+  # multi-video extractions do not pay the L-BFGS-B cost again.
+  use_correction_cache: true
+
+# ---------------------------------------------------------------------------
+# Reference video for exploration and for notebook 03_features
+# ---------------------------------------------------------------------------
+video:
+  lab: "CalMS21_task1"
+  id: "13638642"
+  fps: 30
+
+# ---------------------------------------------------------------------------
+# Feature engineering (notebook 03_features / feature_pipeline.py)
+# ---------------------------------------------------------------------------
+features:
+  # ── NaN imputation ─────────────────────────────────────────────────────
+  imputation:
+    strategy: "knn"         # mean | knn | interpolate | ffill
+    knn_k: 5                # neighbours for KNNImputer, used only when strategy=knn
+
+  # ── Scaling and encoding ───────────────────────────────────────────────
+  scaling:
+    method: "robust"                # standard | robust | quantile
+    angle_encoding: "circular"      # raw | circular (sin/cos for the angles)
+
+  # ── Redundancy analysis ───────────────────────────────────────────────
+  redundancy:
+    pearson_threshold: 0.90         # |r| threshold for flagging a pair
+    compute_mi: true                # mutual information (sklearn)
+    compute_vif: true               # variance inflation factor (statsmodels)
+    compute_dcor: false             # distance correlation (dcor), slow
+
+  # ── Dimensionality reduction and visualisation ─────────────────────────
+  embedding:
+    pca_components: 50              # PCA components taken before UMAP
+    umap_n_neighbors: 15
+    umap_min_dist: 0.1
+    umap_random_state: 42
+
+  # ── Feature importance ────────────────────────────────────────────────
+  importance:
+    rf_n_estimators: 300
+    compute_shap: true
+    shap_sample_size: 500           # subsample for SHAP, which is slow
+    top_n_features: 20
+
+  # ── Versioning (metadata stored in the HDF5) ──────────────────────────
+  versioning:
+    feature_version: "1.0.0"
+    normalization: "l_body"
+
+  # ── Parallelism ───────────────────────────────────────────────────────
+  parallel:
+    n_jobs: -1                      # -1 uses every available core

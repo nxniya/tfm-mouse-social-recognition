@@ -1,0 +1,59 @@
+{
+ "score": 0.4943,
+ "choice": {
+  "CRIM13": {
+   "mode": "ratio",
+   "smooth": true,
+   "mindur": true,
+   "calib": 0.5552
+  },
+  "CalMS21_supplemental": {
+   "mode": "ratio",
+   "smooth": true,
+   "mindur": false,
+   "calib": 0.56
+  },
+  "CalMS21_task1": {
+   "mode": "residual",
+   "smooth": true,
+   "mindur": false,
+   "calib": 0.6051
+  },
+  "CalMS21_task2": {
+   "mode": "residual",
+   "smooth": false,
+   "mindur": true,
+   "calib": 0.8357
+  },
+  "CautiousGiraffe": {
+   "mode": "ratio",
+   "smooth": true,
+   "mindur": false,
+   "calib": 0.3559
+  },
+  "ElegantMink": {
+   "mode": "ratio",
+   "smooth": true,
+   "mindur": true,
+   "calib": 0.4908
+  },
+  "InvincibleJellyfish": {
+   "mode": "ratio",
+   "smooth": true,
+   "mindur": false,
+   "calib": 0.2701
+  },
+  "JovialSwallow": {
+   "mode": "ratio",
+   "smooth": true,
+   "mindur": true,
+   "calib": 0.4472
+  },
+  "TranquilPanther": {
+   "mode": "ratio",
+   "smooth": true,
+   "mindur": true,
+   "calib": 0.3341
+  }
+ }
+}

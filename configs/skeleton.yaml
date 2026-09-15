@@ -1,0 +1,131 @@
+# configs/skeleton.yaml
+# Kinematic correction parameters for MouseSkeleton.
+# Loaded with: cfg = OmegaConf.load("configs/skeleton.yaml")
+#
+# Used by: notebooks/02_skeleton_correction/02a_pipeline.ipynb
+# Results:  results/skeleton_correction_summary.json
+
+# ---------------------------------------------------------------------------
+# Dataset and video selection
+# ---------------------------------------------------------------------------
+dataset:
+  lab_id: "CalMS21_task1"      # reference laboratory
+  frame_limit: 1500            # maximum frames of the sample video
+  frame_limit_bench: 400       # frames for the synthetic benchmark; more times out L-BFGS-B
+  random_seed: 42
+
+# ---------------------------------------------------------------------------
+# Outlier detection
+# ---------------------------------------------------------------------------
+outlier:
+  speed_mad_k: 3.5             # MAD multiplier for speed-based detection
+  length_threshold: 1.84       # correction threshold: 3 sigma of the normalised lengths
+                               # (conservative, so only catastrophic tracking errors)
+  violation_report_thr: 0.25   # biological-quality threshold used for reporting (25%)
+  # Detector recalibrated over 5 videos. The previous values
+  # (speed_sigma=3, detection_n_sigma=3, adaptive_k=2.5) flagged about 81% of all
+  # frames; the calibrated ones flag about 50%, with speed contributing 0% and
+  # length dominating at 30%.
+  # Artefacts: results/detector_calibration.csv and _recommended.json.
+  speed_sigma: 6.0             # (was 3.0) speed threshold for detection
+  detection_n_sigma: 5.0       # (was 3.0) length threshold, in sigma of the segment
+
+# ---------------------------------------------------------------------------
+# Optimiser weights (the L-BFGS-B cost function)
+# ---------------------------------------------------------------------------
+weights:
+  L: 12.0         # edge-length constraint (was 8.0)
+  S: 0.8          # temporal smoothing (alias: T)
+  T: 0.8
+  acc: 0.2        # acceleration regulariser
+  angle: 10.0     # body-axis collinearity
+  jerk: 0.05      # jerk suppression, a third-order temporal penalty
+  angle_cont: 5.0 # orientation continuity, which is what catches identity swaps
+
+# ---------------------------------------------------------------------------
+# Solver configuration
+# ---------------------------------------------------------------------------
+solver:
+  outlier_adhesion: 0.6        # prioritise geometry over corrupted observations
+  n_passes: 3                  # multi-pass: warm-start refinement
+  confidence_sigma: 0.35       # sigma used to compute the observation confidence
+  adaptive_k: 4.5              # (was 2.5) per-keypoint adaptive factor, recalibrated
+  max_disp_factor: 2.0         # maximum displacement allowed, in units of L_body
+  non_outlier_adhesion_scale: 400.0  # adhesion scale for the non-outlier points
+
+# ---------------------------------------------------------------------------
+# Per-keypoint adhesion floors
+# ---------------------------------------------------------------------------
+keypoints:
+  adhesion_floor:
+    tail_base: 2000.0          # tail: heavily anchored, it is a stable point
+    nose: 100.0                # nose: moderately anchored
+  frozen:                      # keypoints restored during post-processing
+    - tail_base
+
+# ---------------------------------------------------------------------------
+# Conservative correction (Hampel filter)
+# ---------------------------------------------------------------------------
+hampel:
+  k: 5                         # Hampel filter window, plus or minus k frames
+  t0: 3.0                      # MAD threshold, in deviations
+  conf_thr: 0.3                # minimum confidence threshold
+
+# ---------------------------------------------------------------------------
+# Synthetic benchmark
+# ---------------------------------------------------------------------------
+benchmark:
+  noise_std: 5.0               # Gaussian noise, in pixels
+  dropout_rate: 0.05           # fraction of frames with a dropout
+  swap_prob: 0.02              # probability of a keypoint swap
+  speed_spikes: 0.03           # fraction of frames carrying a speed spike
+  drift_amplitude: 15.0        # amplitude of the sinusoidal drift, in pixels
+  lambda_l: 100.0              # an aggressive lambda_L, for benchmark recovery
+  adhesion: 0.4
+
+# ---------------------------------------------------------------------------
+# Multi-video population statistics
+# ---------------------------------------------------------------------------
+population:
+  max_videos: 5                # maximum videos to process
+  frame_limit: 400             # frames per video (equals frame_limit_bench)
+
+# ---------------------------------------------------------------------------
+# Bayesian calibration (Optuna)
+# ---------------------------------------------------------------------------
+bayes_opt:
+  n_trials: 50
+  seed: 42
+  lambda_l_range: [1.0, 50.0]
+  lambda_t_range: [0.1, 5.0]
+  lambda_acc_range: [0.0, 1.0]
+  lambda_angle_range: [1.0, 30.0]
+  adhesion_range: [0.2, 0.9]
+  length_threshold_range: [1.0, 3.0]
+
+# ---------------------------------------------------------------------------
+# Outlier-detector calibration
+# ---------------------------------------------------------------------------
+# The default detector (speed_sigma=3, outlier.detection_n_sigma=3,
+# solver.adaptive_k=2.5) flags 78.0% of all frames as outliers, confirmed over 5
+# videos, which means almost the whole trajectory gets re-optimised.
+#
+# CALIBRATION RESULT (2026-06-10):
+#   Recommended parameters: speed_sigma=6, detection_n_sigma=5, adaptive_k=4.5
+#       -> 48.2% of frames flagged, dominated by length (30.3%), with speed
+#          outliers falling from 9.3% to 0.0%, meeting the sub-2% target.
+#   Downstream re-measurement: the effect on the BiLSTM's F1 is NEUTRAL under both
+#       the current and the calibrated detector; every confidence interval
+#       contains 0. The "significant -0.082" recorded in notebook 02d does NOT
+#       reproduce against the current code, which generates 32 windows where the
+#       notebook recorded 64.
+#
+# DECISION: the active detection values are left UNCHANGED. The wider verdict on
+# whether the correction helps was settled separately by the 20-video LOVO
+# re-evaluation, which found that it does not.
+#
+# The calibration artefacts themselves are kept under results/:
+#   results/detector_calibration.csv
+#   results/detector_calibration_recommended.json
+# The two one-off scripts that produced them are not distributed with this
+# repository.

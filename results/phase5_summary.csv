@@ -1,0 +1,26 @@
+model,phase,n_features,test_f1_macro
+M2_bilstm_dz,5,51,0.8252
+M3_best_hp,5,64,0.7348
+M3_bilstm_full,5,64,0.6689
+B5_full_gb,4,576,0.613
+B4_full_rf,4,576,0.611
+M5_multi_bilstm128x2,6,64,0.5602
+M8_BiLSTM-128x2 (M5),6,64,0.5602
+B3_dz_rf,4,459,0.546
+M8_BiLSTM-64x1,6,64,0.5385
+B2_corr_rf,4,387,0.504
+M4_gnn_bilstm,5,7n×5,0.4805
+M8_GRU-64,6,64,0.4587
+B1_raw_rf,4,387,0.449
+M8_GRU-32,6,64,0.4263
+M1_full_lstm_smooth,4,64,0.333
+M1_bilstm,5,43,0.3105
+M2_cnn_lstm_tta_smooth,4,64,0.302
+M2_cnn_lstm_tta,4,64,0.298
+M3_ensemble_wt_smooth,4,64+64,0.233
+M7_LOVO_mean,6,64,0.1959
+M1_full_lstm,4,64,0.167
+M3_ensemble_wt,4,64+64,0.167
+M9_wrs_gamma3,6,64,0.086
+M_abl_raw43,16,43,0.125
+M_abl_corr43,16,43,0.3083

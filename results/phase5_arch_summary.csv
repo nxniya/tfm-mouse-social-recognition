@@ -1,0 +1,4 @@
+Arquitectura,AULC,F1_final,N_para_F1_90,Consultas_desperdiciadas
+Transformer,0.3623,0.6456,,73
+BiLSTM,0.36,0.6788,,76
+TCN,0.1798,0.3624,,64

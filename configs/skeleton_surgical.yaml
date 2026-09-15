@@ -1,0 +1,41 @@
+# configs/skeleton_surgical.yaml
+# A3++ — "surgical" correction: fix only the UNAMBIGUOUS tracking errors, skip the
+# geometric reshaping that the C1/A3 results showed destroys pose signal.
+#
+# Decomposition test. smooth_video does several things: (1) keypoint-swap detection
+# (detect_and_fix_swaps), (2) teleport clipping → NaN (speed_mad_k), (3) dropout
+# spline-fill, (4) L-BFGS reshaping toward the rigid skeleton geometry. Steps 1-3 fix
+# genuine errors; step 4 is the harmful part. This config keeps 1-3 but neutralises 4:
+# near-zero geometry weight (L≈0) + high observation adhesion, so GOOD frames stay at
+# their observed positions and only swaps/teleports/dropouts are repaired.
+# Hypothesis: surgical ≈ raw (neutral) or better — the one correction worth keeping.
+# Read via skeleton_smooth_kwargs(path=...).
+
+outlier:
+  speed_mad_k: 3.5             # keep teleport→NaN clipping active
+  length_threshold: 1.84
+  violation_report_thr: 0.25
+  speed_sigma: 6.0             # same calibrated detector
+  detection_n_sigma: 5.0
+
+weights:
+  L: 0.1                       # (canonical 12.0) ~no geometric reshaping
+  S: 1.0
+  T: 1.0                       # light temporal (keeps dropout fills coherent)
+  acc: 0.1
+  angle: 0.0                   # no body-axis collinearity constraint
+  jerk: 0.02
+  angle_cont: 0.0
+
+solver:
+  outlier_adhesion: 0.9        # (canonical 0.6) keep flagged good frames near observation
+  n_passes: 1
+  confidence_sigma: 0.35
+  adaptive_k: 4.5
+  max_disp_factor: 2.0
+  non_outlier_adhesion_scale: 400.0
+
+keypoints:
+  adhesion_floor:
+    tail_base: 2000.0
+    nose: 100.0

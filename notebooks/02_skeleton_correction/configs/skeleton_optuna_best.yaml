@@ -1,0 +1,15 @@
+source: optuna_tpe
+n_trials: 50
+best_value: 0.0
+weights:
+  L: 19.3525
+  S: 4.7585
+  T: 4.7585
+  acc: 0.732
+  angle: 18.3611
+  jerk: 0.05
+  angle_cont: 5.0
+outlier:
+  length_threshold: 1.312
+solver:
+  outlier_adhesion: 0.3092

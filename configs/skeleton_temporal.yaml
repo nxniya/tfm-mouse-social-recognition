@@ -1,0 +1,42 @@
+# configs/skeleton_temporal.yaml
+# A3+ — "temporally-coherent" correction variant.
+#
+# Hypothesis (from the A4 mechanism finding): the canonical correction hurts
+# downstream because it fixes geometry per-frame and RELOCATES flagged keypoints,
+# injecting frame-to-frame jumps (jitter) that corrupt the velocity features
+# (mean speed-std 7.7 raw → 13.3 corrected). This variant keeps the same geometric
+# stiffness and the same detector (so the SAME frames are flagged), but raises the
+# temporal terms sharply so relocations are smooth in time — fixing geometry WITHOUT
+# the jitter. If this is downstream-neutral-or-better it is the first useful correction.
+#
+# Differences vs configs/skeleton.yaml (canonical): weights.T 0.8→8, acc 0.2→2,
+# jerk 0.05→1.0. Everything else identical. Read via skeleton_smooth_kwargs(path=...).
+
+outlier:
+  speed_mad_k: 3.5
+  length_threshold: 1.84
+  violation_report_thr: 0.25
+  speed_sigma: 6.0             # same calibrated detector as canonical
+  detection_n_sigma: 5.0
+
+weights:
+  L: 12.0                      # keep geometric stiffness (we still fix geometry)
+  S: 8.0
+  T: 8.0                       # (canonical 0.8) STRONG first-order temporal smoothing
+  acc: 2.0                     # (canonical 0.2) penalise acceleration → smooth velocity
+  angle: 10.0
+  jerk: 1.0                    # (canonical 0.05) STRONG jerk suppression → no jumps
+  angle_cont: 5.0
+
+solver:
+  outlier_adhesion: 0.6
+  n_passes: 3                  # need the multi-pass temporal ramp
+  confidence_sigma: 0.35
+  adaptive_k: 4.5              # same calibrated detector as canonical
+  max_disp_factor: 2.0
+  non_outlier_adhesion_scale: 400.0
+
+keypoints:
+  adhesion_floor:
+    tail_base: 2000.0
+    nose: 100.0

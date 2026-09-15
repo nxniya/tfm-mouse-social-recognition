@@ -1,0 +1,134 @@
+# ---------------------------------------------------------------------------
+# Python
+# ---------------------------------------------------------------------------
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+.venv-gpu/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# ---------------------------------------------------------------------------
+# Raw data. The MABe corpus is distributed by the challenge, not by this repo:
+# the whole tree is excluded, archives included. `dataset/README.md` is kept so
+# that the expected layout is documented.
+# ---------------------------------------------------------------------------
+dataset/*
+!dataset/README.md
+
+# ---------------------------------------------------------------------------
+# Heavy regenerable artefacts.
+#
+# Every experiment writes two kinds of output: a small CSV or JSON summarising
+# what happened, and a large binary holding the raw arrays behind it. The
+# summaries are the evidence for the thesis and are tracked; the binaries run to
+# about a gigabyte, exceed GitHub's 100 MB per-file limit and can be rebuilt by
+# re-running the scripts, so they are not.
+#
+# The leading slash matters. A pattern like `models/` with no other separator
+# matches a directory of that name at ANY depth, which would silently swallow
+# `src/models/` — the package holding the classifiers. Anchor every directory
+# rule to the repository root and list nested exclusions explicitly.
+# ---------------------------------------------------------------------------
+*.npz
+*.npy
+*.pt
+*.pth
+*.ckpt
+*.pkl
+*.joblib
+*.h5
+*.parquet
+/models/
+/upload/
+/logs/
+/outputs/
+notebooks/outputs/
+
+# ---------------------------------------------------------------------------
+# Per-run clutter inside results/.
+#
+# results/ is tracked on purpose: the CSV and JSON summaries are the evidence
+# behind the numbers in the README. But roughly half of what accumulated there
+# is the by-product of superseded experiment arms — one threshold dump, one
+# calibration dump and one runtime log per attempt — which document the search,
+# not the result. They stay on disk locally; they are simply not published.
+#
+# What is kept: the pipeline the README documents (lb_ctx12 -> lb_ctx12c ->
+# lb_decperlab -> lb_best), the headline evidence (lovo_*, skeleton_effect_*,
+# al_honest_*, lb_bootstrap, lb_models, lb_crosslab, lb_al_*, lb_summary.md),
+# the figures, and lb19_thr_histgb.json, which _selftest_inference_equiv.py
+# loads.
+# ---------------------------------------------------------------------------
+/results/checkpoints_lovo/
+/results/lb_runtime_cache_*.csv
+/results/lb19_v5*
+/results/lb19_v8*
+/results/lb19_v9w32*
+/results/lb_arm_bal*
+/results/lb_arm_none*
+/results/lb_cw_*
+/results/lb_bag5*
+/results/lb_nobag5*
+/results/lb_pooled_*
+/results/lb_prev_dead*
+/results/lb_prev_full*
+/results/lb_prev_rev*
+/results/lb19_prev*
+/results/lb_v2_ctrl*
+/results/lb_v3_ctrl*
+/results/lb_v7*
+/results/lb_perlab_thr_*.json
+/results/lb_decrev*
+/results/lb_vit*
+/results/lb_ctxm*
+/results/lb19.csv
+/results/lb19_calib_histgb.json
+/results/lb19_decision.csv
+/results/lb_decision*.csv
+/results/lb_ensemble.csv
+/results/lb_perlab.csv
+
+# ---------------------------------------------------------------------------
+# The written dissertation and the defence slides. Both are Spanish documents
+# rather than code, and together they are most of the repository's weight. This
+# is a code repository; the documents are submitted through the university.
+# ---------------------------------------------------------------------------
+/memoria/
+/presentacion/
+
+# ---------------------------------------------------------------------------
+# LaTeX build products. Only the sources and the figures are tracked.
+# ---------------------------------------------------------------------------
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.lol
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.tmp
+
+# ---------------------------------------------------------------------------
+# Working documents, not research code.
+#
+# `ENVIO_KAGGLE.md` documents a submission whose model bundles are not
+# distributed here, so it would only point a reader at paths that do not exist.
+#
+# `IMPROVEMENTS.md` is the internal code-review log. Its findings drove the
+# rewrite, but it navigates by notebook section markers and script names that
+# no longer exist, so as a published document it would mostly send a reader to
+# dead ends.
+# ---------------------------------------------------------------------------
+/tools/
+/ENVIO_KAGGLE.md
+/IMPROVEMENTS.md
+
+# Local agent / editor configuration.
+.claude/
+.github/instructions/

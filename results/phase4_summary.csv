@@ -1,0 +1,12 @@
+Configuración,Modelo,N features,N ventanas,F1-macro (CV),Protocolo
+B1_raw_rf,Random Forest,387,103,0.449 ± 0.040,StratifiedKFold CV
+B2_corr_rf,Random Forest,387,103,0.504 ± 0.027,StratifiedKFold CV
+B3_dz_rf,Random Forest,459,103,0.546 ± 0.080,StratifiedKFold CV
+B4_full_rf,Random Forest,576,103,0.611 ± 0.087,StratifiedKFold CV
+B5_full_gb,HistGradientBoosting,576,103,0.613 ± 0.037,StratifiedKFold CV
+M1_full_lstm,BiLSTM+Atención,64,103,0.167,hold-out temporal
+M1_full_lstm_smooth,BiLSTM+Atención+TSmooth,64,103,0.333,hold-out temporal
+M2_cnn_lstm_tta,CNN-BiLSTM+Atención+TTA,64,103,0.298,hold-out temporal
+M2_cnn_lstm_tta_smooth,CNN-BiLSTM+Atención+TTA+TSmooth,64,103,0.302,hold-out temporal
+M3_ensemble_wt,Ensemble M1+M2 (val-F1 ponderado),64+64,103,0.167,hold-out temporal
+M3_ensemble_wt_smooth,Ensemble M1+M2 (val-F1 ponderado)+TSmooth,64+64,103,0.233,hold-out temporal

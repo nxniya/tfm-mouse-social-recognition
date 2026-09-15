@@ -1,0 +1,41 @@
+# configs/skeleton_gentle.yaml
+# A3 — "gentle" correction variant for the aggressiveness sweep.
+#
+# Hypothesis: the canonical (aggressive) correction in skeleton.yaml significantly
+# LOWERS downstream f1_event (C1: -0.018, p=0.002 on trees) because it oversmooths
+# and erases discriminative pose variation. This variant touches as few frames as
+# possible and stays close to the observations, to test whether a light-touch
+# correction can be downstream-neutral (or whether any correction hurts here).
+#
+# Read by src/skeleton/config.py:skeleton_smooth_kwargs(path=...).
+
+outlier:
+  # Very permissive detection → few frames flagged as outliers.
+  speed_mad_k: 6.0             # (calibrated 3.5) looser hard speed-clip
+  length_threshold: 2.5        # (calibrated 1.84) only extreme length errors
+  detection_n_sigma: 8.0       # (calibrated 5.0) only extreme length outliers
+  speed_sigma: 12.0            # (calibrated 6.0) only extreme speed outliers
+  violation_report_thr: 0.25
+
+weights:
+  # Low geometric stiffness → minimal reshaping of the pose.
+  L: 4.0                       # (canonical 12.0)
+  S: 0.4
+  T: 0.4                       # (canonical 0.8) light temporal smoothing
+  acc: 0.1                     # (canonical 0.2)
+  angle: 3.0                   # (canonical 10.0)
+  jerk: 0.02                   # (canonical 0.05)
+  angle_cont: 2.0
+
+solver:
+  outlier_adhesion: 0.85       # (canonical 0.6) stay close to observations
+  n_passes: 1                  # (canonical 3) single minimal pass
+  confidence_sigma: 0.35
+  adaptive_k: 8.0              # (calibrated 4.5) fewer adaptive flags
+  max_disp_factor: 2.0
+  non_outlier_adhesion_scale: 400.0  # keep non-outlier points anchored to obs
+
+keypoints:
+  adhesion_floor:
+    tail_base: 2000.0
+    nose: 100.0
